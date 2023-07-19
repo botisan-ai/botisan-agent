@@ -30,7 +30,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "@prisma/client": "^5.0.0",
     "bullmq": "^4.4.0",
-    "horajs": "^1.4.0",
+    "hnswlib-node": "^2.0.0",
     "openai": "^3.3.0",
     "prisma": "^5.0.0",
     "reflect-metadata": "^0.1.13",
