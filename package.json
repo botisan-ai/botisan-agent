@@ -31,10 +31,11 @@
     "@prisma/client": "^5.0.0",
     "bullmq": "^4.4.0",
     "horajs": "^1.4.0",
-    "pgvector": "^0.1.4",
+    "openai": "^3.3.0",
     "prisma": "^5.0.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "xstate": "5.0.0-beta.18"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -68,7 +69,7 @@
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
-      "^.+\\.(t|j)s$": "@swc/jest"
+      "^.+\\.(t|j)s?$": "@swc/jest"
     },
     "collectCoverageFrom": [
       "**/*.(t|j)s"
