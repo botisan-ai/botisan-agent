@@ -7,6 +7,7 @@ import { ExpressAdapter } from '@bull-board/express';
 
 import queuesConfig from './queues.config';
 import { queues } from './queues';
+import { AgentProcessor } from './processors';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { queues } from './queues';
       })),
     ),
   ],
-  providers: [],
+  providers: [AgentProcessor],
   exports: [],
 })
 export class QueuesModule {}
