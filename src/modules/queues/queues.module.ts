@@ -7,7 +7,7 @@ import { ExpressAdapter } from '@bull-board/express';
 
 import queuesConfig from './queues.config';
 import { queues } from './queues';
-import { AgentProcessor } from './processors';
+import { IncomingMessagesProcessor } from './processors';
 
 @Module({
   imports: [
@@ -29,7 +29,7 @@ import { AgentProcessor } from './processors';
       })),
     ),
   ],
-  providers: [AgentProcessor],
-  exports: [],
+  providers: [IncomingMessagesProcessor],
+  exports: [BullModule],
 })
 export class QueuesModule {}

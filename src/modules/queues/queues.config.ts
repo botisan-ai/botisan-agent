@@ -1,6 +1,7 @@
 import { registerAs } from '@nestjs/config';
 
 export default registerAs('queues', () => ({
+  incomingMessagesBatchDelay: 3000,
   bullmq: {
     prefix: 'botisan',
     connection: {

@@ -2,15 +2,15 @@ import { RegisterQueueOptions } from '@nestjs/bullmq';
 
 export const queues: RegisterQueueOptions[] = [
   {
-    name: 'agent',
+    name: 'incoming-messages',
     streams: {
       events: {
         maxLen: 100,
       },
     },
     defaultJobOptions: {
-      removeOnComplete: false,
-      removeOnFail: false,
+      removeOnComplete: true,
+      removeOnFail: true,
       // attempts: 10,
       // backoff: {
       //   type: 'exponential',

@@ -1,1 +1,1 @@
-export * from './agent.processor';
+export * from './incoming-messages.processor';
