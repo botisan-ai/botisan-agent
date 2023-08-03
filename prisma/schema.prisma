@@ -8,15 +8,15 @@ datasource db {
 }
 
 model Conversation {
-  id        Int                @id
+  id        Int                @id @default(autoincrement())
   items     ConversationItem[]
-  comment   String?
+  label   String?
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt
 }
 
 model ConversationItem {
-  id             Int          @id
+  id             Int          @id @default(autoincrement())
   conversations  Conversation[]
   role           String
   name           String?

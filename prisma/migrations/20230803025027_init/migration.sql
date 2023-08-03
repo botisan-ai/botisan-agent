@@ -1,7 +1,7 @@
 -- CreateTable
 CREATE TABLE "Conversation" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "comment" TEXT,
+    "label" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
