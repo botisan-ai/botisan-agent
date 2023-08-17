@@ -1,19 +1,24 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { ExpressAdapter } from '@bull-board/express';
 
+import { BotModule } from '@src/bot';
+
+import { RedisModule } from '../redis';
+import { OpenAIModule } from '../openai';
 import queuesConfig from './queues.config';
-import { queues } from './queues';
-import { IncomingMessagesProcessor } from './processors';
+import { processors, queues } from './queues';
 
 @Module({
   imports: [
     ConfigModule.forFeature(queuesConfig),
+    RedisModule,
+    BotModule,
     BullBoardModule.forRoot({
-      route: '/bullmq',
+      route: '/ctrls',
       adapter: ExpressAdapter,
     }),
     BullModule.forRootAsync({
@@ -28,8 +33,9 @@ import { IncomingMessagesProcessor } from './processors';
         adapter: BullMQAdapter,
       })),
     ),
+    OpenAIModule,
   ],
-  providers: [IncomingMessagesProcessor],
+  providers: [...processors],
   exports: [BullModule],
 })
 export class QueuesModule {}
