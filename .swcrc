@@ -11,6 +11,10 @@
       "legacyDecorator": true,
       "decoratorMetadata": true
     },
+    "paths": {
+      "@src": ["./src"],
+      "@src/*": ["./src/*"]
+    },
     "baseUrl": "./"
   },
   "minify": false
