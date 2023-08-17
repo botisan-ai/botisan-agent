@@ -1,19 +1,25 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectQueue } from '@nestjs/bullmq';
-import { Queue } from 'bullmq';
+import { Job, Queue } from 'bullmq';
 
+import {
+  INCOMING_MESSAGES,
+  IncomingMessage,
+  AgentMessagesProcessor,
+} from '@src/modules/queues';
 import { AppService } from './app.service';
-import { IncomingMessage } from './modules/queues';
 
 @Controller()
 export class AppController {
   private readonly incomingMessagesBatchDelay: number;
+  private readonly returnImmediately: boolean;
 
   constructor(
     private readonly configService: ConfigService,
     private readonly appService: AppService,
-    @InjectQueue('incoming-messages')
+    private readonly agentMessagesProcessor: AgentMessagesProcessor,
+    @InjectQueue(INCOMING_MESSAGES)
     private readonly incomingMessagesQueue: Queue<
       IncomingMessage[],
       void,
@@ -22,6 +28,9 @@ export class AppController {
   ) {
     this.incomingMessagesBatchDelay = this.configService.get(
       'queues.incomingMessagesBatchDelay',
+    );
+    this.returnImmediately = this.configService.get<boolean>(
+      'app.returnImmediately',
     );
   }
 
@@ -32,6 +41,16 @@ export class AppController {
 
   @Post('message')
   async postMessage(@Body() message: IncomingMessage) {
+    if (this.returnImmediately) {
+      return this.agentMessagesProcessor.getResponses(message);
+    }
+
+    return this.processMessageAsync(message);
+  }
+
+  private async processMessageAsync(
+    message: IncomingMessage,
+  ): Promise<Job<IncomingMessage[], void, string>> {
     const jobState = await this.incomingMessagesQueue.getJobState(
       message.sender,
     );

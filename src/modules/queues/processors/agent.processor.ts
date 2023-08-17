@@ -1,5 +1,11 @@
-import { Processor, WorkerHost, RegisterQueueOptions } from '@nestjs/bullmq';
-import { Job, Worker } from 'bullmq';
+import {
+  Processor,
+  WorkerHost,
+  RegisterQueueOptions,
+  InjectQueue,
+} from '@nestjs/bullmq';
+import { ConfigService } from '@nestjs/config';
+import { Job, Queue, QueueEvents, Worker } from 'bullmq';
 import { ChatCompletionRequestMessage } from 'openai';
 
 import { SessionService } from '@src/bot';
@@ -46,11 +52,24 @@ export interface OutgoingMessage {
 export class AgentMessagesProcessor extends WorkerHost<
   Worker<IncomingMessage, OutgoingMessage[], string>
 > {
+  private events: QueueEvents;
+
   constructor(
+    private readonly configService: ConfigService,
     private readonly sessionService: SessionService,
     private readonly gptRequestProcessor: GptRequestProcessor,
+    @InjectQueue(AGENT)
+    private readonly agentMessagesQueue: Queue<
+      IncomingMessage,
+      OutgoingMessage[],
+      string
+    >,
   ) {
     super();
+    this.events = new QueueEvents(
+      AGENT,
+      this.configService.get('queues.bullmq'),
+    );
   }
 
   async process(
@@ -104,5 +123,11 @@ export class AgentMessagesProcessor extends WorkerHost<
       type: 'text',
       content: choice.message.content,
     }));
+  }
+
+  async getResponses(message: IncomingMessage): Promise<OutgoingMessage[]> {
+    const job = await this.agentMessagesQueue.add(message.sender, message);
+
+    return job.waitUntilFinished(this.events);
   }
 }

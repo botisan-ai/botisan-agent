@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BullBoardModule } from '@bull-board/nestjs';
@@ -11,6 +11,7 @@ import { RedisModule } from '../redis';
 import { OpenAIModule } from '../openai';
 import queuesConfig from './queues.config';
 import { processors, queues } from './queues';
+import { AgentMessagesProcessor } from './processors';
 
 @Module({
   imports: [
@@ -36,6 +37,6 @@ import { processors, queues } from './queues';
     OpenAIModule,
   ],
   providers: [...processors],
-  exports: [BullModule],
+  exports: [BullModule, AgentMessagesProcessor],
 })
 export class QueuesModule {}
