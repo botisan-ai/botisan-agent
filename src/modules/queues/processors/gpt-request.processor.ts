@@ -33,7 +33,12 @@ export const GPT_REQUEST_QUEUE_OPTION: RegisterQueueOptions = {
 };
 
 @Processor(GPT_REQUEST, {
-  concurrency: 1,
+  concurrency: 10,
+  // GPT-4 rate limit
+  limiter: {
+    max: 200,
+    duration: 60000,
+  },
 })
 export class GptRequestProcessor extends WorkerHost<
   Worker<CreateChatCompletionRequest, CreateChatCompletionResponse, string>

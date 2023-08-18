@@ -20,11 +20,6 @@ export const INCOMING_MESSAGES_QUEUE_OPTION: RegisterQueueOptions = {
   defaultJobOptions: {
     removeOnComplete: true,
     removeOnFail: true,
-    // attempts: 10,
-    // backoff: {
-    //   type: 'exponential',
-    //   delay: 1000,
-    // },
   },
 };
 

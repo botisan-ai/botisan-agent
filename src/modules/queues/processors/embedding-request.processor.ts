@@ -33,7 +33,12 @@ export const EMBEDDING_REQUEST_QUEUE_OPTION: RegisterQueueOptions = {
 };
 
 @Processor(EMBEDDING_REQUEST, {
-  concurrency: 1,
+  concurrency: 10,
+  // embedding rate limit
+  limiter: {
+    max: 3000,
+    duration: 60000,
+  },
 })
 export class EmbeddingRequestProcessor extends WorkerHost<
   Worker<CreateEmbeddingRequest, CreateEmbeddingResponse, string>
