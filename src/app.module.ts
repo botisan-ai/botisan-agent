@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { QueuesModule } from './modules';
+import { QueuesModule } from '@src/modules/queues';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import appConfig from './app.config';

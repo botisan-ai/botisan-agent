@@ -7,7 +7,6 @@ import { ExpressAdapter } from '@bull-board/express';
 
 import { BotModule } from '@src/bot';
 
-import { RedisModule } from '../redis';
 import { OpenAIModule } from '../openai';
 import queuesConfig from './queues.config';
 import { processors, queues } from './queues';
@@ -16,8 +15,8 @@ import { AgentMessagesProcessor } from './processors';
 @Module({
   imports: [
     ConfigModule.forFeature(queuesConfig),
-    RedisModule,
     BotModule,
+    OpenAIModule,
     BullBoardModule.forRoot({
       route: '/ctrls',
       adapter: ExpressAdapter,
@@ -34,7 +33,6 @@ import { AgentMessagesProcessor } from './processors';
         adapter: BullMQAdapter,
       })),
     ),
-    OpenAIModule,
   ],
   providers: [...processors],
   exports: [BullModule, AgentMessagesProcessor],

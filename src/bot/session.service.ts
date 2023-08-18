@@ -1,8 +1,8 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import { ChatCompletionRequestMessage } from 'openai';
 
-import { RedisService } from '@src/modules';
+import { RedisService } from '@src/modules/redis';
 
 export interface Session {
   messagesHistory: ChatCompletionRequestMessage[];
@@ -17,10 +17,7 @@ const SESSION_PREFIX = 'session';
 export class SessionService {
   private redis: Redis;
 
-  constructor(
-    @Inject(forwardRef(() => RedisService))
-    private readonly redisService: RedisService,
-  ) {
+  constructor(private readonly redisService: RedisService) {
     this.redis = this.redisService.client;
   }
 

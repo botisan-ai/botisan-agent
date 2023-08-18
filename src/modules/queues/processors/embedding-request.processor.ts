@@ -13,7 +13,9 @@ import {
 } from 'openai';
 
 import { OpenAIService } from '@src/modules/openai';
-import { TOKEN_COUNT, TokenCountJobData } from './token-count.processor';
+import { TokenCountJobData } from '@src/bot';
+
+import { TOKEN_COUNT } from './token-count.processor';
 
 export const EMBEDDING_REQUEST = 'embedding-request';
 
