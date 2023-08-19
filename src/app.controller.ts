@@ -3,11 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Job, Queue } from 'bullmq';
 
-import {
-  INCOMING_MESSAGES,
-  IncomingMessage,
-  AgentMessagesProcessor,
-} from '@src/modules/queues';
+import { INCOMING_MESSAGES, AgentMessagesProcessor } from '@src/modules/queues';
+import { IncomingMessage } from '@src/common/interfaces';
 import { AppService } from './app.service';
 
 @Controller()
