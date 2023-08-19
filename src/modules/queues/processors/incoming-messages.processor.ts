@@ -6,7 +6,8 @@ import {
 } from '@nestjs/bullmq';
 import { Job, Queue, Worker } from 'bullmq';
 
-import { AGENT, IncomingMessage } from './agent.processor';
+import { IncomingMessage } from '@src/common/interfaces';
+import { AGENT } from './agent.processor';
 
 export const INCOMING_MESSAGES = 'incoming-messages';
 
