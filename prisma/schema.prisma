@@ -8,20 +8,23 @@ datasource db {
 }
 
 model Conversation {
-  id        Int                @id @default(autoincrement())
-  items     ConversationItem[]
-  label   String?
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
+  id               Int                @id @default(autoincrement())
+  items            ConversationItem[]
+  label            String?
+  indexedItemId    Int?
+  indexedContent   String?
+  indexedEmbedding Bytes?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
 }
 
 model ConversationItem {
-  id             Int          @id @default(autoincrement())
-  conversations  Conversation[]
-  role           String
-  name           String?
-  content        String?
-  function_call  String?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id            Int            @id @default(autoincrement())
+  conversations Conversation[]
+  role          String
+  name          String?
+  content       String?
+  function_call String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 }

@@ -71,6 +71,8 @@ export class GptRequestProcessor extends WorkerHost<
   ): Promise<CreateChatCompletionResponse> {
     const response = await this.openai.createChatCompletion(job.data);
 
+    job.log(JSON.stringify(response.data));
+
     if (response.status !== 200) {
       throw new Error(JSON.stringify(response.data));
     }

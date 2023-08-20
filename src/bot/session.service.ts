@@ -6,6 +6,7 @@ import { RedisService } from '@src/modules/redis';
 
 export interface Session {
   messagesHistory: ChatCompletionRequestMessage[];
+  slots?: Record<string, any>;
 }
 
 // session expires in 2 days

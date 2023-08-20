@@ -10,7 +10,10 @@ import { BotModule } from '@src/bot';
 import { OpenAIModule } from '../openai';
 import queuesConfig from './queues.config';
 import { processors, queues } from './queues';
-import { AgentMessagesProcessor } from './processors';
+import {
+  AgentMessagesProcessor,
+  EmbeddingRequestProcessor,
+} from './processors';
 
 @Module({
   imports: [
