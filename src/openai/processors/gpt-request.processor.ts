@@ -12,9 +12,8 @@ import {
   OpenAIApi,
 } from 'openai';
 
-import { OpenAIService } from '@src/modules/openai';
-import { TokenCountJobData } from '@src/bot';
-
+import { OpenAIService } from '../openai.service';
+import { TokenCountJobData } from '../token-count.service';
 import { TOKEN_COUNT } from './token-count.processor';
 
 export const GPT_REQUEST = 'gpt-request';

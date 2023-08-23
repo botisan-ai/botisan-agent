@@ -6,6 +6,7 @@ import { QueuesModule } from '@src/modules/queues';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import appConfig from './app.config';
+import { BotModule } from './bot';
 
 const ENV = process.env.NODE_ENV;
 
@@ -17,6 +18,7 @@ const ENV = process.env.NODE_ENV;
       load: [appConfig],
     }),
     QueuesModule,
+    BotModule,
   ],
   controllers: [AppController],
   providers: [AppService],

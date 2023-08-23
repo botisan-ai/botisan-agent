@@ -1,19 +1,22 @@
 import {
   Processor,
   WorkerHost,
-  RegisterQueueOptions,
   InjectQueue,
+  RegisterQueueOptions,
 } from '@nestjs/bullmq';
 import { ConfigService } from '@nestjs/config';
 import { Job, Queue, QueueEvents, Worker } from 'bullmq';
 import { ChatCompletionRequestMessage } from 'openai';
 
 import { IncomingMessage, OutgoingMessage } from '@src/common/interfaces';
-import { SessionService, VectorService } from '@src/bot';
-import { WeatherFunction } from '@src/bot/functions';
+import {
+  GptRequestProcessor,
+  EmbeddingRequestProcessor,
+} from '@src/openai/processors';
 
-import { GptRequestProcessor } from './gpt-request.processor';
-import { EmbeddingRequestProcessor } from './embedding-request.processor';
+import { WeatherFunction } from '../functions';
+import { SessionService } from '../session.service';
+import { ConversationService } from '../conversation.service';
 
 export const AGENT = 'agent';
 
@@ -48,7 +51,7 @@ export class AgentMessagesProcessor extends WorkerHost<
   constructor(
     private readonly configService: ConfigService,
     private readonly sessionService: SessionService,
-    private readonly vectorService: VectorService,
+    private readonly vectorService: ConversationService,
     private readonly gptRequestProcessor: GptRequestProcessor,
     private readonly embeddingRequestProcessor: EmbeddingRequestProcessor,
     @InjectQueue(AGENT)
@@ -119,7 +122,7 @@ export class AgentMessagesProcessor extends WorkerHost<
     const messages: ChatCompletionRequestMessage[] = [
       {
         role: 'system',
-        content: `You are a friendly weather bot, while you don't know the weather on top of your head, you are provided with a function called \`get_weather\` that you can use to get the weather for a location.\n\nPlease do not call any other function than \`get_weather\`. Once the weather information is provided, you can provide an fun fact about the weather.`,
+        content: `You are Camille, a powerful AI that helps clients from various domains to schedule a phone call. You are very good at reasoning and understanding human language. Your responses are polite, but you can be informal too. Since we are sending SMS messages, try to keep your responses short and concise. You will be given a set of functions to help you with your task, and you will be provided with examples of how to use them and respond to the customers in various situations. Do not use any other functions than the ones provided to you.`,
       },
     ];
 

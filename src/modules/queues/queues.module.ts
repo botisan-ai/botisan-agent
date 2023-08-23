@@ -2,24 +2,16 @@ import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BullBoardModule } from '@bull-board/nestjs';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { ExpressAdapter } from '@bull-board/express';
 
 import { BotModule } from '@src/bot';
 
-import { OpenAIModule } from '../openai';
 import queuesConfig from './queues.config';
-import { processors, queues } from './queues';
-import {
-  AgentMessagesProcessor,
-  EmbeddingRequestProcessor,
-} from './processors';
 
 @Module({
   imports: [
     ConfigModule.forFeature(queuesConfig),
     BotModule,
-    OpenAIModule,
     BullBoardModule.forRoot({
       route: '/ctrls',
       adapter: ExpressAdapter,
@@ -29,15 +21,7 @@ import {
       inject: [ConfigService],
       useFactory: (config: ConfigService) => config.get('queues.bullmq'),
     }),
-    BullModule.registerQueue(...queues),
-    BullBoardModule.forFeature(
-      ...queues.map((queue) => ({
-        name: queue.name,
-        adapter: BullMQAdapter,
-      })),
-    ),
   ],
-  providers: [...processors],
-  exports: [BullModule, AgentMessagesProcessor],
+  exports: [BullModule],
 })
 export class QueuesModule {}

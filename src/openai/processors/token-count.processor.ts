@@ -1,6 +1,7 @@
 import { Processor, WorkerHost, RegisterQueueOptions } from '@nestjs/bullmq';
-import { TokenCountJobData, TokenService } from '@src/bot';
 import { Job, Worker } from 'bullmq';
+
+import { TokenCountJobData, TokenCountService } from '../token-count.service';
 
 export const TOKEN_COUNT = 'token-count';
 
@@ -23,11 +24,11 @@ export const TOKEN_COUNT_QUEUE_OPTION: RegisterQueueOptions = {
 export class TokenCountProcessor extends WorkerHost<
   Worker<TokenCountJobData, void, string>
 > {
-  constructor(private readonly tokenService: TokenService) {
+  constructor(private readonly tokenCountService: TokenCountService) {
     super();
   }
 
   async process(job: Job<TokenCountJobData, void, string>): Promise<void> {
-    await this.tokenService.recordTokenUsage(job.data);
+    await this.tokenCountService.recordTokenUsage(job.data);
   }
 }

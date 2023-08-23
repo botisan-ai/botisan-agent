@@ -1,10 +1,12 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { InjectQueue } from '@nestjs/bullmq';
-import { Job, Queue } from 'bullmq';
 
-import { INCOMING_MESSAGES, AgentMessagesProcessor } from '@src/modules/queues';
 import { IncomingMessage } from '@src/common/interfaces';
+import {
+  AgentMessagesProcessor,
+  IncomingMessagesProcessor,
+} from '@src/bot/processors';
+
 import { AppService } from './app.service';
 
 @Controller()
@@ -16,12 +18,7 @@ export class AppController {
     private readonly configService: ConfigService,
     private readonly appService: AppService,
     private readonly agentMessagesProcessor: AgentMessagesProcessor,
-    @InjectQueue(INCOMING_MESSAGES)
-    private readonly incomingMessagesQueue: Queue<
-      IncomingMessage[],
-      void,
-      string
-    >,
+    private readonly incomingMessagesProcessor: IncomingMessagesProcessor,
   ) {
     this.incomingMessagesBatchDelay = this.configService.get(
       'queues.incomingMessagesBatchDelay',
@@ -42,36 +39,9 @@ export class AppController {
       return this.agentMessagesProcessor.getResponses(message);
     }
 
-    return this.processMessageAsync(message);
-  }
-
-  private async processMessageAsync(
-    message: IncomingMessage,
-  ): Promise<Job<IncomingMessage[], void, string>> {
-    const jobState = await this.incomingMessagesQueue.getJobState(
-      message.sender,
+    return this.incomingMessagesProcessor.addIncomingMessage(
+      message,
+      this.incomingMessagesBatchDelay,
     );
-
-    if (jobState === 'delayed') {
-      const job = await this.incomingMessagesQueue.getJob(message.sender);
-      const removed = await this.incomingMessagesQueue.remove(message.sender);
-      if (removed <= 0) {
-        throw new Error('Failed to remove job');
-      }
-
-      return this.incomingMessagesQueue.add(
-        message.sender,
-        [...job.data, message],
-        {
-          jobId: message.sender,
-          delay: this.incomingMessagesBatchDelay,
-        },
-      );
-    }
-
-    return this.incomingMessagesQueue.add(message.sender, [message], {
-      jobId: message.sender,
-      delay: this.incomingMessagesBatchDelay,
-    });
   }
 }

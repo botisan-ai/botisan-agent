@@ -14,7 +14,7 @@ export interface TokenCountJobData {
 }
 
 @Injectable()
-export class TokenService {
+export class TokenCountService {
   private redis: Redis;
 
   constructor(private readonly redisService: RedisService) {

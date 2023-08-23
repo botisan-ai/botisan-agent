@@ -30,7 +30,15 @@ export const INCOMING_MESSAGES_QUEUE_OPTION: RegisterQueueOptions = {
 export class IncomingMessagesProcessor extends WorkerHost<
   Worker<IncomingMessage[], void, string>
 > {
-  constructor(@InjectQueue(AGENT) private readonly agentQueue: Queue) {
+  constructor(
+    @InjectQueue(AGENT) private readonly agentQueue: Queue,
+    @InjectQueue(INCOMING_MESSAGES)
+    private readonly incomingMessagesQueue: Queue<
+      IncomingMessage[],
+      void,
+      string
+    >,
+  ) {
     super();
   }
 
@@ -62,5 +70,32 @@ export class IncomingMessagesProcessor extends WorkerHost<
     job.log(JSON.stringify(message));
 
     await this.agentQueue.add(sender, message);
+  }
+
+  async addIncomingMessage(
+    message: IncomingMessage,
+    delay: number,
+  ): Promise<Job<IncomingMessage[], void, string>> {
+    const { sender } = message;
+
+    const jobState = await this.incomingMessagesQueue.getJobState(sender);
+
+    if (jobState === 'delayed') {
+      const job = await this.incomingMessagesQueue.getJob(sender);
+      const removed = await this.incomingMessagesQueue.remove(sender);
+      if (removed <= 0) {
+        throw new Error('Failed to remove job');
+      }
+
+      return this.incomingMessagesQueue.add(sender, [...job.data, message], {
+        jobId: sender,
+        delay,
+      });
+    }
+
+    return this.incomingMessagesQueue.add(sender, [message], {
+      jobId: sender,
+      delay,
+    });
   }
 }

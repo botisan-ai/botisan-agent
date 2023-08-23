@@ -11,8 +11,8 @@ export const NUM_DIMENSIONS = 1536;
 export const MAX_ELEMENTS = 3;
 
 @Injectable()
-export class VectorService {
-  private logger = new Logger(VectorService.name);
+export class ConversationService {
+  private logger = new Logger(ConversationService.name);
   private index: HierarchicalNSW;
 
   constructor(private readonly prisma: PrismaService) {
