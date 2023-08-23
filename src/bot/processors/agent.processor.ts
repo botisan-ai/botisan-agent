@@ -150,10 +150,13 @@ export class AgentMessagesProcessor extends WorkerHost<
       }
     }
 
-    messages.push({
-      role: 'system',
-      content: `# Actual Conversation`,
-    });
+    if (conversations.length > 0) {
+      messages.push({
+        role: 'system',
+        content: `# Actual Conversation`,
+      });
+    }
+
     messages.push(...session.messagesHistory);
 
     let response = await this.gptRequestProcessor.createChatCompletion({

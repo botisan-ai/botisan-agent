@@ -10,6 +10,8 @@ export const NUM_DIMENSIONS = 1536;
 // the maximum number of data points.
 export const MAX_ELEMENTS = 3;
 
+export const THRESHOLD = 0.2;
+
 @Injectable()
 export class ConversationService {
   private logger = new Logger(ConversationService.name);
@@ -26,12 +28,21 @@ export class ConversationService {
     this.logger.verbose(`search result: ${JSON.stringify(result)}`);
 
     // get the conversation ids from the search result
-    const { neighbors } = result;
+    const { neighbors, distances } = result;
+
+    // filter out the neighbors that are not similar enough
+    const similarNeighbors = neighbors.filter(
+      (neighbor, index) => distances[index] < THRESHOLD,
+    );
+
+    this.logger.verbose(
+      `similar neighbors: ${JSON.stringify(similarNeighbors)}`,
+    );
 
     const conversations = await this.prisma.conversation.findMany({
       where: {
         id: {
-          in: neighbors,
+          in: similarNeighbors,
         },
       },
       include: {
